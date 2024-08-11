@@ -4,10 +4,12 @@ import pino from 'pino-http';
 
 import { env } from './utils/env.js';
 import { ENV_VARS } from './constants/index.js';
-import contactsRouter from './routers/contacts.js';
 
 import errorHandlerMiddleware from '../src/middlewares/errorHandlerMiddleware.js';
 import notFoundMiddleware from '../src/middlewares/notFoundMiddleware.js';
+
+import rootRouter from './routers/index.js';
+import cookieParser from 'cookie-parser';
 
 const PORT = Number(env(ENV_VARS.PORT, '3000'));
 // const PORT = Number(env(ENV_VARS.PORT, '3000'));
@@ -17,6 +19,7 @@ export const startServer = () => {
   app.use(express.json());
 
   app.use(cors());
+  app.use(cookieParser());
   app.use(
     pino({
       transport: {
@@ -24,7 +27,7 @@ export const startServer = () => {
       },
     }),
   );
-  app.use(contactsRouter);
+  app.use(rootRouter);
   app.use(notFoundMiddleware);
   app.use(errorHandlerMiddleware);
 

@@ -7,10 +7,12 @@ export const getAllContacts = async ({
   perPage = 10,
   sortBy = '_id',
   sortOrder = SORT_ORDER.ASC,
+  userId,
 }) => {
   const limit = perPage;
   const skip = (page - 1) * perPage;
   const contactsQuery = ContactsCollection.find();
+  contactsQuery.where('parentId').equals(userId);
   /*
   
   const contactsCount = await ContactsCollection.find()
@@ -40,8 +42,11 @@ export const getContactById = async (contactId) => {
   const contact = await ContactsCollection.findById(contactId);
   return contact;
 };
-export const createContact = async (payload) => {
-  const contact = await ContactsCollection.create(payload);
+export const createContact = async (payload, userId) => {
+  const contact = await ContactsCollection.create({
+    ...payload,
+    parentId: userId,
+  });
   return contact;
 };
 export const deleteContact = async (contactId) => {
