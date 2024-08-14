@@ -11,8 +11,8 @@ export const getAllContacts = async ({
 }) => {
   const limit = perPage;
   const skip = (page - 1) * perPage;
-  const contactsQuery = ContactsCollection.find();
-  contactsQuery.where('parentId').equals(userId);
+  const contactsQuery = ContactsCollection.find({ userId });
+  // contactsQuery.where('parentId').equals(userId);
   /*
   
   const contactsCount = await ContactsCollection.find()
@@ -27,7 +27,7 @@ export const getAllContacts = async ({
 */
 
   const [contactsCount, contacts] = await Promise.all([
-    ContactsCollection.find().merge(contactsQuery).countDocuments(),
+    ContactsCollection.countDocuments({ userId }),
     contactsQuery
       .skip(skip)
       .limit(limit)
@@ -38,36 +38,36 @@ export const getAllContacts = async ({
   return { contacts, ...paginationData };
 };
 
-export const getContactById = async (contactId) => {
-  const contact = await ContactsCollection.findById(contactId);
+export const getContactById = async (contactId, userId) => {
+  const contact = await ContactsCollection.findOne({ _id: contactId, userId });
   return contact;
 };
-export const createContact = async (payload, userId) => {
+export const createContact = async ({ payload, userId }) => {
   const contact = await ContactsCollection.create({
     ...payload,
-    parentId: userId,
+    userId,
   });
   return contact;
 };
-export const deleteContact = async (contactId) => {
-  const contact = await ContactsCollection.findByIdAndDelete(contactId);
+export const deleteContact = async (contactId, userId) => {
+  const contact = await ContactsCollection.findOneAndDelete({
+    _id: contactId,
+    userId,
+  });
   return contact;
 };
-export const updateContact = async (contactId, payload, options = {}) => {
+export const updateContact = async (contactId, updateData, userId) => {
   const rawContact = await ContactsCollection.findOneAndUpdate(
-    { _id: contactId },
-    payload,
-    {
-      new: true,
-      includeResultMetadata: true,
-      ...options,
-    },
+    { _id: contactId, userId },
+    { $set: updateData },
+    { new: true, runValidators: true },
   );
+  return rawContact;
 
-  if (!rawContact || !rawContact.value) return null;
+  // if (!rawContact || !rawContact.value) return null;
 
-  return {
-    contact: rawContact.value,
-    isNew: Boolean(rawContact?.lastErrorObject?.updated),
-  };
+  // return {
+  //   contact: rawContact.value,
+  //   isNew: Boolean(rawContact?.lastErrorObject?.updated),
+  // };
 };

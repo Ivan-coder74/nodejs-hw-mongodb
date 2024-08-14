@@ -4,6 +4,7 @@ import {
   logoutUser,
   refreshSession,
 } from '../services/auth.js';
+import createHttpError from 'http-errors';
 const setupSessionCookies = (res, session) => {
   res.cookie('sessionId', session.id, {
     httpOnly: true,
@@ -16,10 +17,10 @@ const setupSessionCookies = (res, session) => {
 };
 export const registerUserController = async (req, res) => {
   const user = await createUser(req.body);
-  res.json({
+  res.status(201).json({
     status: 201,
     message: 'Successfully created user!',
-    data: { user },
+    data: user,
   });
 };
 
@@ -44,10 +45,11 @@ export const logoutUserController = async (req, res) => {
 };
 export const refreshTokenController = async (req, res) => {
   const { sessionId, sessionToken } = req.cookies;
+  if (!sessionId || !sessionToken) {
+    throw createHttpError(401, 'Session not found!');
+  }
   const session = await refreshSession({ sessionId, sessionToken });
-
   setupSessionCookies(res, session);
-
   res.json({
     status: 200,
     message: 'Token refreshed successfully!',
