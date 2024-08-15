@@ -17,21 +17,13 @@ const contactsRouter = Router();
 contactsRouter.use('/:contactId', validateMongoId('contactId'));
 contactsRouter.use('/', authenticate);
 contactsRouter.get('/', ctrlWrapper(getAllContactsController));
-contactsRouter.get(
-  '/:contactId',
-
-  ctrlWrapper(getContactByIdController),
-);
+contactsRouter.get('/:contactId', ctrlWrapper(getContactByIdController));
 contactsRouter.post(
   '/',
   validateBody(createContactSchema),
   ctrlWrapper(createContactController),
 );
-contactsRouter.delete(
-  '/:contactId',
-
-  ctrlWrapper(deleteContactController),
-);
+contactsRouter.delete('/:contactId', ctrlWrapper(deleteContactController));
 contactsRouter.put(
   '/:contactId',
   validateBody(createContactSchema),
