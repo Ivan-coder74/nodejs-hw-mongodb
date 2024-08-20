@@ -81,19 +81,36 @@ export const getContactByIdController = async (req, res, next) => {
 //     next(error);
 //   }
 // };
-export const createContactController = async (req, res, next) => {
-  try {
-    const userId = req.user._id;
-    const contact = await createContact({ payload: req.body, userId });
-    res.status(201).json({
-      status: 201,
-      message: 'Successfully created contact!',
-      data: contact,
-    });
-  } catch (error) {
-    next(error);
-  }
+
+export const createContactController = async (req, res) => {
+  const { body, file } = req;
+
+  const student = await createContact({ ...body, photo: file }, req.user._id);
+
+  res.status(201).json({
+    status: 201,
+    message: `Successfully created a student!`,
+    data: student,
+  });
 };
+
+// export const createContactController = async (req, res, next) => {
+//   try {
+//     const { body, file } = req.body;
+//     const userId = req.user._id;
+//     const contact = await createContact({ ...body, photo: file }, userId);
+
+//     // const userId = req.user._id;
+//     // const contact = await createContact({ payload: req.body, userId });
+//     res.status(201).json({
+//       status: 201,
+//       message: 'Successfully created contact!',
+//       data: contact,
+//     });
+//   } catch (error) {
+//     next(error);
+//   }
+// };
 export const deleteContactController = async (req, res, next) => {
   try {
     const { contactId } = req.params;
