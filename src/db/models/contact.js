@@ -1,11 +1,10 @@
-import { number } from 'joi';
 import { Schema, model } from 'mongoose';
 
 const contactSchema = new Schema(
   {
     name: { type: String },
-    phoneNumber: { type: number },
-    email: { type: String },
+    phoneNumber: { type: String, match: /^[0-9]{10}$/ },
+    email: { type: String, match: /^\S+@\S+\.\S+$/ },
     userId: { type: Schema.Types.ObjectId },
     photo: { type: String },
     isFavourite: { type: Boolean, default: false },
