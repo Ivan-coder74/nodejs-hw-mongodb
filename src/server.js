@@ -10,6 +10,7 @@ import notFoundMiddleware from '../src/middlewares/notFoundMiddleware.js';
 
 import rootRouter from './routers/index.js';
 import cookieParser from 'cookie-parser';
+import { swaggerDocs } from './middlewares/swaggerOuts.js';
 
 const PORT = Number(env(ENV_VARS.PORT, '3000'));
 // const PORT = Number(env(ENV_VARS.PORT, '3000'));
@@ -28,6 +29,7 @@ export const startServer = () => {
     }),
   );
   app.use('/auth/uploads', express.static(UPLOAD_DIR));
+  app.use('/api-docs', swaggerDocs());
   app.use(rootRouter);
   app.use(notFoundMiddleware);
   app.use(errorHandlerMiddleware);
