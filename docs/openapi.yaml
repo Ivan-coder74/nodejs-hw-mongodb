@@ -14,7 +14,7 @@ tags:
     description: Authorization operations
 servers:
   - url: http://localhost:3000
-  - url: https://hw7-swagger-96e8.onrender.com
+  - url: https://nodejs-hw-mongodb-6-hiqh.onrender.com
 paths:
   /contacts/{contactId}:
     get:
